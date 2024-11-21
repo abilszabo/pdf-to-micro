@@ -63,6 +63,8 @@ def pdf_to_xlsx(pdf_path, xlsx_path):
     # set init. conditions and flags
     table_continued = False
     tables_sum = 0
+    include_header = False
+    split_pages_horiz = True
 
     # open the pdf file
     with pdfplumber.open(pdf_path) as pdf:
@@ -78,14 +80,14 @@ def pdf_to_xlsx(pdf_path, xlsx_path):
 
             # extract table settings
             table_settings = {
-                "vertical_strategy": "lines",
+                "vertical_strategy": "text",
                 "horizontal_strategy": "lines",
-                "snap_y_tolerance": 5,
-                "intersection_x_tolerance": 15,
-                "text_tolerance": 1,
-                "text_x_tolerance": 1,
-                "text_y_tolerance": 1
-            }   
+                # "snap_y_tolerance": 10,  # Increased for better row grouping
+                "intersection_x_tolerance": 30,  # Helps group overlapping text in columns
+                "min_words_vertical": 10,  # Reduced for variable-width columns
+                "text_x_tolerance": 5,  # Increased for column detection with left-aligned text
+                "text_y_tolerance": 3   # Slightly increased for better row grouping
+            }
 
             # # create image for visual debugging    
             # im = page.to_image(300)
@@ -118,12 +120,13 @@ def pdf_to_xlsx(pdf_path, xlsx_path):
                     if not table_continued:
                         tables_sum += 1
 
-                        # pull it's header
-                        header = find_header(page, table.bbox, table_settings)
-                        # add the header to the worksheet
-                        ws.append([header])
-                        for cell in ws[ws.max_row]:
-                            cell.font = Font(bold=True)
+                        if include_header:
+                            # pull it's header
+                            header = find_header(page, table.bbox, table_settings)
+                            # add the header to the worksheet
+                            ws.append([header])
+                            for cell in ws[ws.max_row]:
+                                cell.font = Font(bold=True)
                         ws.append([f"Table {tables_sum}, Page {page.page_number}"])
                         for cell in ws[ws.max_row]:
                             cell.font = Font(italic=True)
@@ -159,13 +162,19 @@ def pdf_to_xlsx(pdf_path, xlsx_path):
 
 # ================== RUN TESTS ================== #
 
-# get path to this python file
+# # get path to this python file
 # path = os.path.dirname(os.path.abspath(__file__))
 
-pdf_to_xlsx('example_pdfs/FUTURA-System-Manual.pdf', 'output/FUTURA-System-Manual.xlsx')
-# pdf_to_xlsx('example_pdfs/HDS10M.pdf', 'output/HDS10M.xlsx')
+# pdf_to_xlsx('example_pdfs/FUTURA-System-Manual.pdf', 'output/FUTURA-System-Manual.xlsx')
+# os.system('start excel.exe output/FUTURA-System-Manual.xlsx')
 
-# open the xlsx file
-os.system('start excel.exe output/FUTURA-System-Manual.xlsx')
+# pdf_to_xlsx('example_pdfs/HDS10M.pdf', 'output/HDS10M.xlsx')
+# os.system('start excel.exe output/HDS10M.xlsx')
+
+pdf_to_xlsx('example_pdfs/ArcModbusOPC.pdf', 'output/ArcModbusOPC.xlsx')
+os.system('start excel.exe output/ArcModbusOPC.xlsx')
+
+
+
 
 

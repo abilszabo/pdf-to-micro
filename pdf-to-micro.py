@@ -37,11 +37,11 @@ def find_header(page, table_bbox, table_settings):
 # ================== MAIN FUNCTIONS ================== #
 
 # PDF TO XLSX
-def pdf_to_xlsx(pdf_path, xlsx_path):
+def pdf_to_xlsx(pdf_path, xlsx_path, user_settings=None):
     wb = Workbook()
     ws = wb.active
 
-    # if make sure the xlsx file at the filepath exists, make sure its closed before editing
+    # if the xlsx file at the filepath exists, make sure its closed before editing
     if os.path.exists(xlsx_path):
         try:
             # Try to open the file in exclusive mode
@@ -62,9 +62,37 @@ def pdf_to_xlsx(pdf_path, xlsx_path):
 
     # set init. conditions and flags
     table_continued = False
-    tables_sum = 0
-    include_header = False
+    include_header = True
     split_pages_horiz = True
+
+    tables_sum = 0
+    page_num = 0
+    pages_list = []
+
+    # set the extract table settings from user input
+    table_settings = {
+        "vertical_strategy": "lines",       # "lines", "lines_strict", "text", "explicit"
+        "horizontal_strategy": "lines",     # "lines", "lines_strict", "text", "explicit"
+        "explicit_vertical_lines": [],      # list of x-coordinates to force vertical lines
+        "explicit_horizontal_lines": [],    # list of y-coordinates to force horizontal lines
+        "snap_tolerance": 3,                # parallel lines within snap_tolerance points will be
+        "snap_x_tolerance": 3,              #    "snapped" to the same horizontal or vertical position.
+        "snap_y_tolerance": 3,
+        "join_tolerance": 3,                # line segments on same infinite line within join_tolerance
+        "join_x_tolerance": 3,              #     will be joined together
+        "join_y_tolerance": 3,
+        "edge_min_length": 3,               # lines shorter than this will be discarded
+        "min_words_vertical": 3,            # for vert_strat == "text": min. words must share alignment
+        "min_words_horizontal": 1,          # for horiz_strat == "text": min. words must share alignment
+        "intersection_tolerance": 3,        # when combo edges into cells
+        "intersection_x_tolerance": 3,      #    the intersection must be within this tolerance
+        "intersection_y_tolerance": 3,
+        "text_tolerance": 3,                # when searching for words, indiv letters must be
+        "text_x_tolerance": 3,              #    text_tolerance apart
+        "text_y_tolerance": 3,
+    }
+    if user_settings:
+        table_settings.update(user_settings) 
 
     # open the pdf file
     with pdfplumber.open(pdf_path) as pdf:
@@ -74,20 +102,21 @@ def pdf_to_xlsx(pdf_path, xlsx_path):
             cell.font = Font(bold=True, size=18)
         ws.append([])
 
-        for page in pdf.pages:
-            # width = page.width
-            # height = page.height
+        if split_pages_horiz:
+            for page in pdf.pages:
+                width = page.width
+                height = page.height
 
-            # extract table settings
-            table_settings = {
-                "vertical_strategy": "text",
-                "horizontal_strategy": "lines",
-                # "snap_y_tolerance": 10,  # Increased for better row grouping
-                "intersection_x_tolerance": 30,  # Helps group overlapping text in columns
-                "min_words_vertical": 10,  # Reduced for variable-width columns
-                "text_x_tolerance": 5,  # Increased for column detection with left-aligned text
-                "text_y_tolerance": 3   # Slightly increased for better row grouping
-            }
+                if width > height:
+                    pages_list.append(page.crop((0, 0, width/2, height)))
+                    pages_list.append(page.crop((width/2, 0, width, height)))
+                else:
+                    pages_list.append(page)
+
+
+        for page in pages_list:
+
+            page_num += 1
 
             # # create image for visual debugging    
             # im = page.to_image(300)
@@ -127,7 +156,7 @@ def pdf_to_xlsx(pdf_path, xlsx_path):
                             ws.append([header])
                             for cell in ws[ws.max_row]:
                                 cell.font = Font(bold=True)
-                        ws.append([f"Table {tables_sum}, Page {page.page_number}"])
+                        ws.append([f"Table {tables_sum}, Page {page_num}"])
                         for cell in ws[ws.max_row]:
                             cell.font = Font(italic=True)
 
@@ -165,13 +194,40 @@ def pdf_to_xlsx(pdf_path, xlsx_path):
 # # get path to this python file
 # path = os.path.dirname(os.path.abspath(__file__))
 
+
+# VARIABLE TO STORE TABLE SETTINGS TO PASS INTO MAIN FUNCTIONS
+# Hamilton Arc Modbus OPC Settings
+ham_table_settings = {
+    "vertical_strategy": "text", 
+    # "horizontal_strategy": "lines",
+    # "explicit_vertical_lines": [],
+    # "explicit_horizontal_lines": [],
+    # "snap_tolerance": 3,
+    # "snap_x_tolerance": 3,
+    # "snap_y_tolerance": 3,
+    "join_tolerance": 10,
+    # "join_x_tolerance": 3,
+    # "join_y_tolerance": 3,
+    # "edge_min_length": 3,
+    "min_words_vertical": 3,
+    # "min_words_horizontal": 1,
+    # "intersection_tolerance": 3,
+    # "intersection_x_tolerance": 3,
+    # "intersection_y_tolerance": 3,
+    # "text_tolerance": 3,
+    # "text_x_tolerance": 3,
+    # "text_y_tolerance": 3,
+}
+
+
+
 # pdf_to_xlsx('example_pdfs/FUTURA-System-Manual.pdf', 'output/FUTURA-System-Manual.xlsx')
 # os.system('start excel.exe output/FUTURA-System-Manual.xlsx')
 
 # pdf_to_xlsx('example_pdfs/HDS10M.pdf', 'output/HDS10M.xlsx')
 # os.system('start excel.exe output/HDS10M.xlsx')
 
-pdf_to_xlsx('example_pdfs/ArcModbusOPC.pdf', 'output/ArcModbusOPC.xlsx')
+pdf_to_xlsx('example_pdfs/ArcModbusOPC.pdf', 'output/ArcModbusOPC.xlsx', ham_table_settings)
 os.system('start excel.exe output/ArcModbusOPC.xlsx')
 
 

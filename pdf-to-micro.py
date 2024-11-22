@@ -37,7 +37,7 @@ def find_header(page, table_bbox, table_settings):
 # ================== MAIN FUNCTIONS ================== #
 
 # PDF TO XLSX
-def pdf_to_xlsx(pdf_path, xlsx_path, user_settings=None):
+def pdf_to_xlsx(pdf_path, xlsx_path, user_settings=None, user_file_settings=None):
     wb = Workbook()
     ws = wb.active
 
@@ -62,14 +62,17 @@ def pdf_to_xlsx(pdf_path, xlsx_path, user_settings=None):
 
     # set init. conditions and flags
     table_continued = False
-    include_header = True
-    split_pages_horiz = True
-
     tables_sum = 0
     page_num = 0
     pages_list = []
 
-    # set the extract table settings from user input
+
+    # set the extract file and table settings from user input
+    file_settings = {
+        "include_header": True,
+        "split_pages_horiz": False
+    }
+
     table_settings = {
         "vertical_strategy": "lines",       # "lines", "lines_strict", "text", "explicit"
         "horizontal_strategy": "lines",     # "lines", "lines_strict", "text", "explicit"
@@ -93,6 +96,8 @@ def pdf_to_xlsx(pdf_path, xlsx_path, user_settings=None):
     }
     if user_settings:
         table_settings.update(user_settings) 
+    if user_file_settings:  
+        file_settings.update(user_file_settings)
 
     # open the pdf file
     with pdfplumber.open(pdf_path) as pdf:
@@ -102,7 +107,7 @@ def pdf_to_xlsx(pdf_path, xlsx_path, user_settings=None):
             cell.font = Font(bold=True, size=18)
         ws.append([])
 
-        if split_pages_horiz:
+        if file_settings.split_pages_horiz:
             for page in pdf.pages:
                 width = page.width
                 height = page.height
@@ -149,7 +154,7 @@ def pdf_to_xlsx(pdf_path, xlsx_path, user_settings=None):
                     if not table_continued:
                         tables_sum += 1
 
-                        if include_header:
+                        if file_settings.include_header:
                             # pull it's header
                             header = find_header(page, table.bbox, table_settings)
                             # add the header to the worksheet
@@ -219,6 +224,10 @@ ham_table_settings = {
     # "text_y_tolerance": 3,
 }
 
+ham_file_settings = {
+    "include_header": True,
+    "split_pages_horiz": True
+}
 
 
 # pdf_to_xlsx('example_pdfs/FUTURA-System-Manual.pdf', 'output/FUTURA-System-Manual.xlsx')
@@ -227,7 +236,7 @@ ham_table_settings = {
 # pdf_to_xlsx('example_pdfs/HDS10M.pdf', 'output/HDS10M.xlsx')
 # os.system('start excel.exe output/HDS10M.xlsx')
 
-pdf_to_xlsx('example_pdfs/ArcModbusOPC.pdf', 'output/ArcModbusOPC.xlsx', ham_table_settings)
+pdf_to_xlsx('example_pdfs/ArcModbusOPC.pdf', 'output/ArcModbusOPC.xlsx', ham_table_settings, ham_file_settings)
 os.system('start excel.exe output/ArcModbusOPC.xlsx')
 
 

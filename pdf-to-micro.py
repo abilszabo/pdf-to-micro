@@ -5,8 +5,12 @@ import re
 
 from openpyxl import Workbook
 from openpyxl.styles import Font
-# from docx import Document
-# from PyPDF2 import PdfReader
+from docx import Document
+from PyPDF2 import PdfReader
+from docx.shared import Pt
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from PIL import Image
+import io
 
 # ================== SUB-FUNCTIONS ================== #
 # XLSX FIND HEADER
@@ -187,12 +191,50 @@ def pdf_to_xlsx(pdf_path, xlsx_path, user_settings=None, user_file_settings=None
     print(f"\033[45mExcel file saved to {xlsx_path}\033[0m")
 
 
-# PDF TO DOCX
+
+# # PDF TO DOCX
 # def pdf_to_docx(pdf_path, docx_path):
-#     reader = PdfReader(pdf_path)
 #     doc = Document()
-#     for page in reader.pages:
-#         doc.add_paragraph(page.extract_text())
+    
+#     # Open PDF using pdfplumber
+#     with pdfplumber.open(pdf_path) as pdf:
+#         for page in pdf.pages:
+#             # Extract text
+#             text = page.extract_text()
+#             if text:
+#                 paragraph = doc.add_paragraph()
+#                 paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+#                 run = paragraph.add_run(text)
+#                 run.font.size = Pt(11)  # Adjust font size as needed
+            
+#             for image_obj in page.images:
+#                 try:
+#                     # Extract image data from PDFStream
+#                     image_data = image_obj["stream"].get_data()
+                    
+#                     # Check if the image data is valid
+#                     if image_data:
+#                         # Try to open the image with PIL
+#                         try:
+#                             img = Image.open(io.BytesIO(image_data))
+#                         except Image.UnidentifiedImageError:
+#                             # If the image format is not recognized, try converting it
+#                             img = Image.open(io.BytesIO(image_data)).convert("RGB")
+                        
+#                         # Save image to DOCX
+#                         img_bytes = io.BytesIO()
+#                         img.save(img_bytes, format="PNG")
+#                         img_bytes.seek(0)
+#                         doc.add_picture(img_bytes)
+#                     else:
+#                         print("No image data found.")
+#                 except Exception as e:
+#                     print(f"\033[91mError processing image: {e}\033[0m")
+            
+#             # Add a page break after each PDF page
+#             doc.add_page_break()
+    
+#     # Save the resulting DOCX
 #     doc.save(docx_path)
 
 
@@ -255,8 +297,8 @@ fut_table_settings = {
 }
 
 
-pdf_to_xlsx('example_pdfs/FUTURA-System-Manual.pdf', 'output/FUTURA-System-Manual.xlsx', fut_table_settings)
-os.system('start excel.exe output/FUTURA-System-Manual.xlsx')
+# pdf_to_xlsx('example_pdfs/FUTURA-System-Manual.pdf', 'output/FUTURA-System-Manual.xlsx', fut_table_settings)
+# os.system('start excel.exe output/FUTURA-System-Manual.xlsx')
 
 # pdf_to_xlsx('example_pdfs/HDS10M.pdf', 'output/HDS10M.xlsx')
 # os.system('start excel.exe output/HDS10M.xlsx')
@@ -265,6 +307,13 @@ os.system('start excel.exe output/FUTURA-System-Manual.xlsx')
 # POSSIBLY ADD A METHOD TO GENERATE THE TABLE VIA EXTRACTWORD FUNCTION INSTEAD FOR TRICKY TABLES
 # pdf_to_xlsx('example_pdfs/ArcModbusOPC.pdf', 'output/ArcModbusOPC.xlsx', ham_table_settings, ham_file_settings)
 # os.system('start excel.exe output/ArcModbusOPC.xlsx')
+
+
+# pdf_to_docx('example_pdfs/HDS10M.pdf', 'output/HDS10M.docx')
+# os.system('start winword.exe output/HDS10M.docx')
+
+pdf_to_docx('example_pdfs/LabMuffinGuideToExfoliation.pdf', 'output/LabMuffinGuideToExfoliation.docx')
+os.system('start winword.exe output/LabMuffinGuideToExfoliation.docx')
 
 
 

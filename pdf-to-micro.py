@@ -98,6 +98,7 @@ def pdf_to_xlsx(pdf_path, xlsx_path, user_settings=None, user_file_settings=None
         table_settings.update(user_settings) 
     if user_file_settings:  
         file_settings.update(user_file_settings)
+        print(file_settings)
 
     # open the pdf file
     with pdfplumber.open(pdf_path) as pdf:
@@ -107,7 +108,7 @@ def pdf_to_xlsx(pdf_path, xlsx_path, user_settings=None, user_file_settings=None
             cell.font = Font(bold=True, size=18)
         ws.append([])
 
-        if file_settings.split_pages_horiz:
+        if file_settings["split_pages_horiz"]:
             for page in pdf.pages:
                 width = page.width
                 height = page.height
@@ -117,6 +118,8 @@ def pdf_to_xlsx(pdf_path, xlsx_path, user_settings=None, user_file_settings=None
                     pages_list.append(page.crop((width/2, 0, width, height)))
                 else:
                     pages_list.append(page)
+        else:
+            pages_list = pdf.pages
 
 
         for page in pages_list:
@@ -154,7 +157,7 @@ def pdf_to_xlsx(pdf_path, xlsx_path, user_settings=None, user_file_settings=None
                     if not table_continued:
                         tables_sum += 1
 
-                        if file_settings.include_header:
+                        if file_settings["include_header"]:
                             # pull it's header
                             header = find_header(page, table.bbox, table_settings)
                             # add the header to the worksheet
@@ -229,15 +232,39 @@ ham_file_settings = {
     "split_pages_horiz": True
 }
 
+fut_table_settings = {
+    # "vertical_strategy": "lines", 
+    # "horizontal_strategy": "lines",
+    # "explicit_vertical_lines": [],
+    # "explicit_horizontal_lines": [],
+    # "snap_tolerance": 3,
+    # "snap_x_tolerance": 3,
+    # "snap_y_tolerance": 3,
+    # "join_tolerance": 3,
+    # "join_x_tolerance": 3,
+    # "join_y_tolerance": 3,
+    # "edge_min_length": 3,
+    # "min_words_vertical": 3,
+    # "min_words_horizontal": 1,
+    # "intersection_tolerance": 3,
+    # "intersection_x_tolerance": 3,
+    # "intersection_y_tolerance": 3,
+    "text_tolerance": 1,
+    "text_x_tolerance": 1,
+    "text_y_tolerance": 1,
+}
 
-# pdf_to_xlsx('example_pdfs/FUTURA-System-Manual.pdf', 'output/FUTURA-System-Manual.xlsx')
-# os.system('start excel.exe output/FUTURA-System-Manual.xlsx')
+
+pdf_to_xlsx('example_pdfs/FUTURA-System-Manual.pdf', 'output/FUTURA-System-Manual.xlsx', fut_table_settings)
+os.system('start excel.exe output/FUTURA-System-Manual.xlsx')
 
 # pdf_to_xlsx('example_pdfs/HDS10M.pdf', 'output/HDS10M.xlsx')
 # os.system('start excel.exe output/HDS10M.xlsx')
 
-pdf_to_xlsx('example_pdfs/ArcModbusOPC.pdf', 'output/ArcModbusOPC.xlsx', ham_table_settings, ham_file_settings)
-os.system('start excel.exe output/ArcModbusOPC.xlsx')
+
+# POSSIBLY ADD A METHOD TO GENERATE THE TABLE VIA EXTRACTWORD FUNCTION INSTEAD FOR TRICKY TABLES
+# pdf_to_xlsx('example_pdfs/ArcModbusOPC.pdf', 'output/ArcModbusOPC.xlsx', ham_table_settings, ham_file_settings)
+# os.system('start excel.exe output/ArcModbusOPC.xlsx')
 
 
 

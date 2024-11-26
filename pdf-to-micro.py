@@ -238,6 +238,53 @@ def pdf_to_xlsx(pdf_path, xlsx_path, user_settings=None, user_file_settings=None
 #     doc.save(docx_path)
 
 
+# ================== GUI ================== #
+
+# Create the main window
+root = tk.Tk()
+root.title("PDF to Microsoft Office Converter")
+# 16:10 aspect ratio
+root.geometry("1000x620")
+# make the window resizable
+root.resizable(True, True)
+# set the background color
+root.configure(bg="white")
+# start the main loop
+root.mainloop()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # ================== RUN TESTS ================== #
 
@@ -245,56 +292,56 @@ def pdf_to_xlsx(pdf_path, xlsx_path, user_settings=None, user_file_settings=None
 # path = os.path.dirname(os.path.abspath(__file__))
 
 
-# VARIABLE TO STORE TABLE SETTINGS TO PASS INTO MAIN FUNCTIONS
-# Hamilton Arc Modbus OPC Settings
-ham_table_settings = {
-    "vertical_strategy": "text", 
-    # "horizontal_strategy": "lines",
-    # "explicit_vertical_lines": [],
-    # "explicit_horizontal_lines": [],
-    # "snap_tolerance": 3,
-    # "snap_x_tolerance": 3,
-    # "snap_y_tolerance": 3,
-    "join_tolerance": 10,
-    # "join_x_tolerance": 3,
-    # "join_y_tolerance": 3,
-    # "edge_min_length": 3,
-    "min_words_vertical": 3,
-    # "min_words_horizontal": 1,
-    # "intersection_tolerance": 3,
-    # "intersection_x_tolerance": 3,
-    # "intersection_y_tolerance": 3,
-    # "text_tolerance": 3,
-    # "text_x_tolerance": 3,
-    # "text_y_tolerance": 3,
-}
+# # VARIABLE TO STORE TABLE SETTINGS TO PASS INTO MAIN FUNCTIONS
+# # Hamilton Arc Modbus OPC Settings
+# ham_table_settings = {
+#     "vertical_strategy": "text", 
+#     # "horizontal_strategy": "lines",
+#     # "explicit_vertical_lines": [],
+#     # "explicit_horizontal_lines": [],
+#     # "snap_tolerance": 3,
+#     # "snap_x_tolerance": 3,
+#     # "snap_y_tolerance": 3,
+#     "join_tolerance": 10,
+#     # "join_x_tolerance": 3,
+#     # "join_y_tolerance": 3,
+#     # "edge_min_length": 3,
+#     "min_words_vertical": 3,
+#     # "min_words_horizontal": 1,
+#     # "intersection_tolerance": 3,
+#     # "intersection_x_tolerance": 3,
+#     # "intersection_y_tolerance": 3,
+#     # "text_tolerance": 3,
+#     # "text_x_tolerance": 3,
+#     # "text_y_tolerance": 3,
+# }
 
-ham_file_settings = {
-    "include_header": True,
-    "split_pages_horiz": True
-}
+# ham_file_settings = {
+#     "include_header": True,
+#     "split_pages_horiz": True
+# }
 
-fut_table_settings = {
-    # "vertical_strategy": "lines", 
-    # "horizontal_strategy": "lines",
-    # "explicit_vertical_lines": [],
-    # "explicit_horizontal_lines": [],
-    # "snap_tolerance": 3,
-    # "snap_x_tolerance": 3,
-    # "snap_y_tolerance": 3,
-    # "join_tolerance": 3,
-    # "join_x_tolerance": 3,
-    # "join_y_tolerance": 3,
-    # "edge_min_length": 3,
-    # "min_words_vertical": 3,
-    # "min_words_horizontal": 1,
-    # "intersection_tolerance": 3,
-    # "intersection_x_tolerance": 3,
-    # "intersection_y_tolerance": 3,
-    "text_tolerance": 1,
-    "text_x_tolerance": 1,
-    "text_y_tolerance": 1,
-}
+# fut_table_settings = {
+#     # "vertical_strategy": "lines", 
+#     # "horizontal_strategy": "lines",
+#     # "explicit_vertical_lines": [],
+#     # "explicit_horizontal_lines": [],
+#     # "snap_tolerance": 3,
+#     # "snap_x_tolerance": 3,
+#     # "snap_y_tolerance": 3,
+#     # "join_tolerance": 3,
+#     # "join_x_tolerance": 3,
+#     # "join_y_tolerance": 3,
+#     # "edge_min_length": 3,
+#     # "min_words_vertical": 3,
+#     # "min_words_horizontal": 1,
+#     # "intersection_tolerance": 3,
+#     # "intersection_x_tolerance": 3,
+#     # "intersection_y_tolerance": 3,
+#     "text_tolerance": 1,
+#     "text_x_tolerance": 1,
+#     "text_y_tolerance": 1,
+# }
 
 
 # pdf_to_xlsx('example_pdfs/FUTURA-System-Manual.pdf', 'output/FUTURA-System-Manual.xlsx', fut_table_settings)
@@ -312,8 +359,8 @@ fut_table_settings = {
 # pdf_to_docx('example_pdfs/HDS10M.pdf', 'output/HDS10M.docx')
 # os.system('start winword.exe output/HDS10M.docx')
 
-pdf_to_docx('example_pdfs/LabMuffinGuideToExfoliation.pdf', 'output/LabMuffinGuideToExfoliation.docx')
-os.system('start winword.exe output/LabMuffinGuideToExfoliation.docx')
+# pdf_to_docx('example_pdfs/LabMuffinGuideToExfoliation.pdf', 'output/LabMuffinGuideToExfoliation.docx')
+# os.system('start winword.exe output/LabMuffinGuideToExfoliation.docx')
 
 
 
